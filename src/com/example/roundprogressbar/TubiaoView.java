@@ -125,7 +125,12 @@ public class TubiaoView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        /**
+         * 绘制背景
+         */
         canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), backgroundPaint);
+
         /**
          * 绘制顶部文字
          */
@@ -184,6 +189,16 @@ public class TubiaoView extends View {
         /**
          * 绘制底部1-12月份
          */
+
+        if(datas!=null){
+
+           int num =  datas.size();
+
+
+//            for(int x = 0;x<datas.size();x++){
+//                canvas.drawLine(,xuXianPaint);
+//            }
+        }
     }
 
     public int getRowItemHeight(int account) {
