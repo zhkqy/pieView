@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:android_custom="http://schemas.android.com/apk/res/com.example.circlepregress"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:orientation="vertical"
+              android:layout_height="match_parent">
+
+
+    <com.example.roundprogressbar.RoundProgressBar
+            android:id="@+id/roundProgressBar2"
+            android:layout_gravity="center"
+            android:layout_width="180dip"
+            android:layout_height="180dip"
+            android_custom:roundColor="@color/gray_f5"
+            android_custom:roundWidth="15dip"/>
+
+
+    <com.example.roundprogressbar.TubiaoView
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+    />
+</LinearLayout>
