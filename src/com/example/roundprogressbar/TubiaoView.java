@@ -19,7 +19,6 @@ public class TubiaoView extends View {
     private Paint linePaint;  //线的配置
     private Paint textPaint;  //文本的配置
     private Paint xuXianPaint;  //虚线的配置
-    private Paint backgroundPaint;//背景的配置
 
     private String topText = "金额（万元）";
     private String bottomRigText = "月份";
@@ -76,7 +75,6 @@ public class TubiaoView extends View {
         linePaint = new Paint();
         textPaint = new Paint();
         xuXianPaint = new Paint();
-        backgroundPaint = new Paint();
 
         linePaint.setColor(Color.RED); //设置圆环的颜色
         linePaint.setStyle(Paint.Style.FILL); //设置空心
@@ -95,9 +93,6 @@ public class TubiaoView extends View {
         xuXianPaint.setStrokeWidth(2);
         xuXianPaint.setPathEffect(new DashPathEffect(new float[]{4, 4, 4, 4}, 1));
 
-        backgroundPaint.setColor(getContext().getResources().getColor(R.color.white)); //设置圆环的颜色
-        backgroundPaint.setStyle(Paint.Style.FILL); //设置空心
-        backgroundPaint.setAntiAlias(true);  //消除锯齿
     }
 
     @Override
@@ -126,10 +121,6 @@ public class TubiaoView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        /**
-         * 绘制背景
-         */
-        canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), backgroundPaint);
 
         /**
          * 绘制顶部文字
@@ -144,11 +135,6 @@ public class TubiaoView extends View {
         canvas.drawText(bottomRigText,
                 getMeasuredWidth() - getTextWidth(textPaint, bottomRigText),
                 getMeasuredHeight() - bottomTextRec.height() + Math.abs(bottomTextRec.top), textPaint);
-//
-//        Log.i("zzzzzz", "bounds top = " + bounds.top);
-//        Log.i("zzzzzz", "bounds left = " + bounds.left);
-//        Log.i("zzzzzz", "bounds right = " + bounds.right);
-//        Log.i("zzzzzz", "bounds bottom = " + bounds.bottom);
 
         /***
          * 绘制左边每行虚线
@@ -159,7 +145,7 @@ public class TubiaoView extends View {
         for (int x = 0; x < rowLineCount + 1; x++) {
 
             Path path = new Path();
-            int left = 0;
+            int left = leftTextMaxWidth;
             int top = x * itemHeight + t;
             int right = getMeasuredWidth();
             int bottom = x * itemHeight + t;
@@ -170,7 +156,6 @@ public class TubiaoView extends View {
             amountPos[x] = top;
         }
 
-        canvas.drawRect(0, topTextHeight, leftTextMaxWidth, getMeasuredHeight(), backgroundPaint);
         /***
          * 绘制左边每行金额
          */
@@ -193,7 +178,6 @@ public class TubiaoView extends View {
         if(datas!=null){
 
            int num =  datas.size();
-
 
 //            for(int x = 0;x<datas.size();x++){
 //                canvas.drawLine(,xuXianPaint);
