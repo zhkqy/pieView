@@ -16,9 +16,9 @@ public class TubiaoView extends View {
 
     public List<AddAssetStatItem> datas;
 
-    private Paint linePaint;  //线的配置
     private Paint textPaint;  //文本的配置
     private Paint xuXianPaint;  //虚线的配置
+    private Paint brokenLinePaint; //折线的配置
 
     private String topText = "金额（万元）";
     private String bottomRigText = "月份";
@@ -31,6 +31,8 @@ public class TubiaoView extends View {
     private int bottomHeight = 0;
 
     private int leftTextMaxWidth = 0;//左边字体最大的宽度
+
+    private int radius;//折线图圆的半径
 
     public int[] amountPos = new int[rowLineCount + 1];
 
@@ -72,14 +74,11 @@ public class TubiaoView extends View {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        linePaint = new Paint();
+
+        radius = DisplayUtil.dipToPixels(getContext(), 4);
         textPaint = new Paint();
         xuXianPaint = new Paint();
-
-        linePaint.setColor(Color.RED); //设置圆环的颜色
-        linePaint.setStyle(Paint.Style.FILL); //设置空心
-        linePaint.setStrokeWidth(1); //设置圆环的宽度
-        linePaint.setAntiAlias(true);  //消除锯齿
+        brokenLinePaint = new Paint();
 
         textPaint.setColor(Color.BLACK); //设置圆环的颜色
         textPaint.setStyle(Paint.Style.FILL); //设置空心
@@ -93,6 +92,10 @@ public class TubiaoView extends View {
         xuXianPaint.setStrokeWidth(2);
         xuXianPaint.setPathEffect(new DashPathEffect(new float[]{4, 4, 4, 4}, 1));
 
+        brokenLinePaint.setColor(Color.BLUE); //设置圆环的颜色
+        brokenLinePaint.setStyle(Paint.Style.FILL); //设置空心
+        brokenLinePaint.setStrokeWidth(2); //设置圆环的宽度
+        brokenLinePaint.setAntiAlias(true);  //消除锯齿
     }
 
     @Override
@@ -145,16 +148,17 @@ public class TubiaoView extends View {
         /***
          * 绘制左边每行虚线
          */
-        int t = topTextHeight + topTextHeight / 2;
-        int b = getMeasuredHeight() - topTextHeight - topTextHeight / 2;
-        int itemHeight = (b - t) / rowLineCount;
+        int topDottedLine = topTextHeight + topTextHeight / 2;  //顶部虚线位置
+
+        int bottomDottedLine = getMeasuredHeight() - topDottedLine;  //底部虚线位置
+        int itemHeight = (bottomDottedLine - topDottedLine) / rowLineCount;
         for (int x = 0; x < rowLineCount + 1; x++) {
 
             Path path = new Path();
             int left = leftTextMaxWidth;
-            int top = x * itemHeight + t;
+            int top = x * itemHeight + topDottedLine;
             int right = getMeasuredWidth();
-            int bottom = x * itemHeight + t;
+            int bottom = x * itemHeight + topDottedLine;
 
             path.moveTo(left, top);
             path.lineTo(right, bottom);
@@ -186,6 +190,11 @@ public class TubiaoView extends View {
             float distance = getMeasuredWidth() - bottomRigTextWidth - leftTextMaxWidth;//计算出底部12月份的总宽度
 
             float temp = distance / num;
+
+            Point p = new Point();
+
+            float saveX = 0, saveY = 0;
+
             for (int x = 0; x < datas.size(); x++) {
                 float te = leftTextMaxWidth + (temp / 2) + (temp * x);
                 canvas.drawLine(te, getMeasuredHeight(), te, 0, xuXianPaint);
@@ -196,11 +205,42 @@ public class TubiaoView extends View {
                 textPaint.getTextBounds(moth, 0, moth.length(), mothBound);
 
                 canvas.drawText(moth, te - mothW / 2, getMeasuredHeight() - mothBound.bottom, textPaint);
+
+                /***
+                 * 绘制折线  ######################################################
+                 */
+
+                /**
+                 * 绘制点
+                 */
+
+                float currentAmount = datas.get(x).amount;
+
+                float topY = (bottomDottedLine - topDottedLine) - (currentAmount / maxAmount * (bottomDottedLine - topDottedLine));
+
+                Log.i("gggggg", "bottomDottedLine - topDottedLine = " + (bottomDottedLine - topDottedLine));
+                Log.i("gggggg", "currentAmount / maxAmount  = " + (currentAmount / maxAmount));
+                Log.i("gggggg", "currentAmount= " + currentAmount);
+                Log.i("gggggg", "maxAmount= " + maxAmount);
+
+                canvas.drawCircle(te, topDottedLine + topY, radius, brokenLinePaint);
+
+                /**
+                 * 绘制线
+                 */
+
+                if (x > 0) {
+                    canvas.drawLine(saveX, saveY, te, topDottedLine + topY, brokenLinePaint);
+                }
+                saveX = te;
+                saveY = topDottedLine + topY;
+
+                /***
+                 * 绘制折线  ######################################################
+                 */
             }
         }
-        /***
-         * 绘制折线
-         */
+
     }
 
 
