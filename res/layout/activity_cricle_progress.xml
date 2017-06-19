@@ -20,5 +20,9 @@
             android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            android_custom:biaoDottedColor="@color/newmission_progress"
+            android_custom:biaoTextColor="@color/black"
+            android_custom:biaoTextSize="16sp"
+
     />
 </LinearLayout>

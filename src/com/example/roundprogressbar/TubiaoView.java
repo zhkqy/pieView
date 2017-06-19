@@ -1,9 +1,11 @@
 package com.example.roundprogressbar;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.View;
+import com.example.circlepregress.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,21 +23,27 @@ public class TubiaoView extends View {
     private String topText = "金额（万元）";
     private String bottomRigText = "月份";
 
-    private int topTextHeight = 0;
+    private int topTextHeight = 0;  //顶部文字的高度
 
     private int arrayMaxAmount = 0;  //数组中最大的金额值
     private int drawMaxAmount = 0;  //界面中绘制的最大值
 
-    private int bottomRigTextWidth = 0;
+    private int bottomRigTextWidth = 0;  //右下角底部文字的宽度
 
-    private int rowLineCount = 4;
-    private int bottomHeight = 0;
+    private int rowLineCount = 4; //虚线行数
 
     private int leftTextMaxWidth = 0;//左边字体最大的宽度
 
     private int radius;//折线图圆的半径
 
     public int[] amountPos = new int[rowLineCount + 1];
+
+
+    public int biaoTextSize;
+    public int biaoTextColor;
+    public int biaoDottedColor;
+    public int biaoRadius;
+
 
     public TubiaoView(Context context) {
         this(context, null);
@@ -48,19 +56,23 @@ public class TubiaoView extends View {
     public TubiaoView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-//        TypedArray mTypedArray = context.obtainStyledAttributes(attrs,
-//                R.styleable.RoundProgressBar);
-//        //获取自定义属性和默认值
-//        roundColor = mTypedArray.getColor(R.styleable.RoundProgressBar_roundColor, Color.RED);
-//        roundWidth = mTypedArray.getDimension(R.styleable.RoundProgressBar_roundWidth, 5);
+        TypedArray mTypedArray = context.obtainStyledAttributes(attrs,
+                R.styleable.TubiaoView);
+        //获取自定义属性和默认值
+        biaoDottedColor = mTypedArray.getColor(R.styleable.TubiaoView_biaoDottedColor, Color.BLACK);
+        biaoRadius = (int) mTypedArray.getDimension(R.styleable.TubiaoView_biaoRadius, DisplayUtil.spToPixels(getContext(), 4));
+        biaoTextColor = mTypedArray.getColor(R.styleable.TubiaoView_biaoTextColor, Color.BLACK);
+        biaoTextSize = (int) mTypedArray.getDimension(R.styleable.TubiaoView_biaoTextSize, DisplayUtil.spToPixels(getContext(), 14));
 
-//        mTypedArray.recycle();
+        mTypedArray.recycle();
+
+        radius = biaoRadius;
 
         datas = new ArrayList<>();
-        datas.add(new AddAssetStatItem(0, 1, 24));
+        datas.add(new AddAssetStatItem(10, 1, 24));
         datas.add(new AddAssetStatItem(45, 2, 24));
-        datas.add(new AddAssetStatItem(0, 3, 24));
-        datas.add(new AddAssetStatItem(0, 4, 24));
+        datas.add(new AddAssetStatItem(30, 3, 24));
+        datas.add(new AddAssetStatItem(70, 4, 24));
         datas.add(new AddAssetStatItem(37, 5, 24));
         datas.add(new AddAssetStatItem(29, 6, 24));
         datas.add(new AddAssetStatItem(19, 7, 24));
@@ -76,16 +88,15 @@ public class TubiaoView extends View {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        radius = DisplayUtil.dipToPixels(getContext(), 4);
         textPaint = new Paint();
         xuXianPaint = new Paint();
         brokenLinePaint = new Paint();
 
-        textPaint.setColor(Color.BLACK); //设置圆环的颜色
+        textPaint.setColor(biaoTextColor); //设置圆环的颜色
         textPaint.setStyle(Paint.Style.FILL); //设置空心
         textPaint.setStrokeWidth(1); //设置圆环的宽度
         textPaint.setAntiAlias(true);  //消除锯齿
-        textPaint.setTextSize(DisplayUtil.spToPixels(getContext(), 14));
+        textPaint.setTextSize(biaoTextSize);
 
         xuXianPaint.setColor(Color.BLACK); //设置圆环的颜色
         xuXianPaint.setStyle(Paint.Style.STROKE); //设置空心
@@ -93,7 +104,7 @@ public class TubiaoView extends View {
         xuXianPaint.setStrokeWidth(2);
         xuXianPaint.setPathEffect(new DashPathEffect(new float[]{4, 4, 4, 4}, 1));
 
-        brokenLinePaint.setColor(Color.BLUE); //设置圆环的颜色
+        brokenLinePaint.setColor(biaoDottedColor); //设置圆环的颜色
         brokenLinePaint.setStyle(Paint.Style.FILL); //设置空心
         brokenLinePaint.setStrokeWidth(2); //设置圆环的宽度
         brokenLinePaint.setAntiAlias(true);  //消除锯齿
@@ -231,7 +242,6 @@ public class TubiaoView extends View {
                  */
             }
         }
-
     }
 
 

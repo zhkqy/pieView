@@ -4,4 +4,14 @@
         <attr name="roundColor" format="color"/>
         <attr name="roundWidth" format="dimension"></attr>
     </declare-styleable>
+
+    <declare-styleable name="TubiaoView">
+        <attr name="biaoDottedColor" format="color"/>
+        <attr name="biaoTextColor" format="color"/>
+        <attr name="biaoTextSize" format="dimension"/>
+        <attr name="biaoRadius" format="dimension"/>
+
+    </declare-styleable>
+
+
 </resources>

@@ -3,4 +3,33 @@
 
     <color name="gray_f5">#f5f5f5</color>
     <color name="white">#ffffff</color>
+
+    <color name="card_approval_wait_bg">#EEC050</color>
+    <color name="growth_card_status_wait">#F3BA6D</color>
+    <color name="growth_card_status_doing">#5DD774</color>
+    <color name="growth_card_status_hang">#DE8CF9</color>
+    <color name="mem_management_by_board_bg">#F2F2F2</color>
+    <color name="chart_pie_wait">#FECD44</color>
+    <color name="chart_pie_doing">#3ADD8A</color>
+    <color name="chart_pie_complete">#3DBEF5</color>
+    <color name="chart_pie_hang">#DE8CF9</color>
+    <color name="newmission_progress">#FF9B4B</color>
+    <color name="approval_deal_pass">#17C959</color>
+    <color name="approval_deal_reject">#DA3030</color>
+    <color name="approval_dealing">#FFA83F</color>
+
+    <!-- 浅灰色 -->
+    <color name="lightgray">#d3c8c4</color>
+    <!-- 透明 -->
+    <color name="transparent">#00000000</color>
+    <color name="write">#FFFFFF</color>
+    <!-- 黑色 -->
+    <color name="black">#FF000000</color>
+    <!-- 蓝色 -->
+    <color name="blue">#FF0099FF</color>
+    <!-- 红紫色 -->
+    <color name="red">#FF0000</color>
+    <!-- 黄色 -->
+    <color name="yellow">#FFCC44</color>
+
 </resources>
