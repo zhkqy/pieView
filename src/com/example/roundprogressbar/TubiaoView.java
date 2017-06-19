@@ -115,17 +115,23 @@ public class TubiaoView extends View {
                 leftTextMaxWidth = getTextWidth(textPaint, str);
             }
         }
+
+        bottomRigTextWidth = getTextWidth(textPaint, bottomRigText);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-
         /**
          * 绘制顶部文字
          */
-        canvas.drawText(topText, 0, getBaseLine(topText, textPaint), textPaint);
+
+        Rect topBounds = new Rect();
+        textPaint.getTextBounds(topText, 0, topText.length(), topBounds);
+        int topBaseline = Math.abs(topBounds.top);
+
+        canvas.drawText(topText, 0, topBaseline, textPaint);
         /**
          * 绘制底部文字
          */
@@ -134,7 +140,7 @@ public class TubiaoView extends View {
         textPaint.getTextBounds(bottomRigText, 0, bottomRigText.length(), bottomTextRec);
         canvas.drawText(bottomRigText,
                 getMeasuredWidth() - getTextWidth(textPaint, bottomRigText),
-                getMeasuredHeight() - bottomTextRec.height() + Math.abs(bottomTextRec.top), textPaint);
+                getMeasuredHeight() - bottomTextRec.bottom, textPaint);
 
         /***
          * 绘制左边每行虚线
@@ -175,15 +181,28 @@ public class TubiaoView extends View {
          * 绘制底部1-12月份
          */
 
-        if(datas!=null){
+        if (datas != null && datas.size() > 0) {
+            int num = datas.size();
+            float distance = getMeasuredWidth() - bottomRigTextWidth - leftTextMaxWidth;//计算出底部12月份的总宽度
 
-           int num =  datas.size();
+            float temp = distance / num;
+            for (int x = 0; x < datas.size(); x++) {
+                float te = leftTextMaxWidth + (temp / 2) + (temp * x);
+                canvas.drawLine(te, getMeasuredHeight(), te, 0, xuXianPaint);
 
-//            for(int x = 0;x<datas.size();x++){
-//                canvas.drawLine(,xuXianPaint);
-//            }
+                String moth = String.valueOf(datas.get(x).month);
+                int mothW = getTextWidth(textPaint, moth);
+                Rect mothBound = new Rect();
+                textPaint.getTextBounds(moth, 0, moth.length(), mothBound);
+
+                canvas.drawText(moth, te - mothW / 2, getMeasuredHeight() - mothBound.bottom, textPaint);
+            }
         }
+        /***
+         * 绘制折线
+         */
     }
+
 
     public int getRowItemHeight(int account) {
         int gewei = account % 10;
@@ -199,20 +218,6 @@ public class TubiaoView extends View {
         }
         return itemh;
     }
-
-    private int getBaseLine(String str, Paint p) {
-        Rect bounds = new Rect();
-        p.getTextBounds(str, 0, str.length(), bounds);
-        int baseline = Math.abs(bounds.top);
-        return baseline;
-    }
-
-    private int getBaseLine(int height, Paint p) {
-        Paint.FontMetricsInt fontMetrics = p.getFontMetricsInt();
-        int baseline = (height - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
-        return baseline;
-    }
-
 
     public int getTextWidth(Paint paint, String str) {
         int iRet = 0;
