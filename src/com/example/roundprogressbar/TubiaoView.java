@@ -3,9 +3,7 @@ package com.example.roundprogressbar;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import com.example.circlepregress.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +22,10 @@ public class TubiaoView extends View {
     private String bottomRigText = "月份";
 
     private int topTextHeight = 0;
-    private int maxAmount = 0;
+
+    private int arrayMaxAmount = 0;  //数组中最大的金额值
+    private int drawMaxAmount = 0;  //界面中绘制的最大值
+
     private int bottomRigTextWidth = 0;
 
     private int rowLineCount = 4;
@@ -56,10 +57,10 @@ public class TubiaoView extends View {
 //        mTypedArray.recycle();
 
         datas = new ArrayList<>();
-        datas.add(new AddAssetStatItem(25, 1, 24));
+        datas.add(new AddAssetStatItem(0, 1, 24));
         datas.add(new AddAssetStatItem(45, 2, 24));
-        datas.add(new AddAssetStatItem(65, 3, 24));
-        datas.add(new AddAssetStatItem(23, 4, 24));
+        datas.add(new AddAssetStatItem(0, 3, 24));
+        datas.add(new AddAssetStatItem(0, 4, 24));
         datas.add(new AddAssetStatItem(37, 5, 24));
         datas.add(new AddAssetStatItem(29, 6, 24));
         datas.add(new AddAssetStatItem(19, 7, 24));
@@ -105,14 +106,14 @@ public class TubiaoView extends View {
         Rect bounds = new Rect();
         textPaint.getTextBounds(topText, 0, topText.length(), bounds);
         topTextHeight = bounds.height();  //计算顶部文字高度
-        maxAmount = 0;
+        arrayMaxAmount = 0;
         if (datas != null) {
             for (int x = 0; x < datas.size(); x++) {
-                if (datas.get(x).amount > maxAmount) {
-                    maxAmount = datas.get(x).amount;
+                if (datas.get(x).amount > arrayMaxAmount) {
+                    arrayMaxAmount = datas.get(x).amount;
                 }
             }
-            int itemh = getRowItemHeight(maxAmount);
+            int itemh = getRowItemHeight(arrayMaxAmount);
             for (int x = rowLineCount; x >= 0; x--) {
                 String str = (rowLineCount - x) * itemh + "";
                 leftTextMaxWidth = getTextWidth(textPaint, str);
@@ -170,8 +171,9 @@ public class TubiaoView extends View {
          * 绘制左边每行金额
          */
 
-        int itemh = getRowItemHeight(maxAmount);
+        int itemh = getRowItemHeight(arrayMaxAmount);
 
+        drawMaxAmount = rowLineCount * itemh;
         for (int x = rowLineCount; x >= 0; x--) {
             int p = amountPos[x];
 
@@ -188,23 +190,20 @@ public class TubiaoView extends View {
         if (datas != null && datas.size() > 0) {
             int num = datas.size();
             float distance = getMeasuredWidth() - bottomRigTextWidth - leftTextMaxWidth;//计算出底部12月份的总宽度
+            float temp = distance / num;  //计算出每个宽度
 
-            float temp = distance / num;
-
-            Point p = new Point();
-
-            float saveX = 0, saveY = 0;
-
+            float saveX = 0, saveY = 0; //绘制线 保存上一个点的坐标
             for (int x = 0; x < datas.size(); x++) {
-                float te = leftTextMaxWidth + (temp / 2) + (temp * x);
-                canvas.drawLine(te, getMeasuredHeight(), te, 0, xuXianPaint);
+                float leftX = leftTextMaxWidth + (temp / 2) + (temp * x);  //每行月份字体的中心线位置
 
+                /**
+                 * 绘制月份
+                 */
                 String moth = String.valueOf(datas.get(x).month);
                 int mothW = getTextWidth(textPaint, moth);
                 Rect mothBound = new Rect();
                 textPaint.getTextBounds(moth, 0, moth.length(), mothBound);
-
-                canvas.drawText(moth, te - mothW / 2, getMeasuredHeight() - mothBound.bottom, textPaint);
+                canvas.drawText(moth, leftX - mothW / 2, getMeasuredHeight() - mothBound.bottom, textPaint);
 
                 /***
                  * 绘制折线  ######################################################
@@ -213,26 +212,18 @@ public class TubiaoView extends View {
                 /**
                  * 绘制点
                  */
-
                 float currentAmount = datas.get(x).amount;
+                float topY = (bottomDottedLine - topDottedLine) - (currentAmount / drawMaxAmount * (bottomDottedLine - topDottedLine));
 
-                float topY = (bottomDottedLine - topDottedLine) - (currentAmount / maxAmount * (bottomDottedLine - topDottedLine));
-
-                Log.i("gggggg", "bottomDottedLine - topDottedLine = " + (bottomDottedLine - topDottedLine));
-                Log.i("gggggg", "currentAmount / maxAmount  = " + (currentAmount / maxAmount));
-                Log.i("gggggg", "currentAmount= " + currentAmount);
-                Log.i("gggggg", "maxAmount= " + maxAmount);
-
-                canvas.drawCircle(te, topDottedLine + topY, radius, brokenLinePaint);
+                canvas.drawCircle(leftX, topDottedLine + topY, radius, brokenLinePaint);
 
                 /**
                  * 绘制线
                  */
-
                 if (x > 0) {
-                    canvas.drawLine(saveX, saveY, te, topDottedLine + topY, brokenLinePaint);
+                    canvas.drawLine(saveX, saveY, leftX, topDottedLine + topY, brokenLinePaint);
                 }
-                saveX = te;
+                saveX = leftX;
                 saveY = topDottedLine + topY;
 
                 /***
